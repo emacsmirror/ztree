@@ -216,8 +216,7 @@ Otherwise open DIRED with the parent directory"
 
 (defun ztree-dir-highlight-opened-file-hook (frame)
   "Hook called when the current window has been changed"
-  (when-let ((file (buffer-file-name)))
-    (message file)
+  (let ((file (buffer-file-name)))
     (dolist (buf (ztree-dir--find-all-ztree-dir-buffers frame))
       (with-current-buffer buf
         (setq ztree-dir-currently-open-file file)
