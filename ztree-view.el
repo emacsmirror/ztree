@@ -594,7 +594,8 @@ Argument PATH start node."
                                        (ztree-insert-single-entry short-name depth
                                                                   expandable expanded
                                                                   0 (when expandable
-                                                                      count-children-left)))))
+                                                                      count-children-left)
+                                                                  (ztree-node-face node)))))
     (puthash line node ztree-line-to-node-table)
     ;; save the properties for the line - side and text offset
     (puthash line line-properties ztree-line-tree-properties)

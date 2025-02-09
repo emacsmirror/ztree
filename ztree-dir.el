@@ -75,6 +75,8 @@ One could add own filters in the following way:
 (defvar-local ztree-dir-show-filtered-files nil
   "Show or not files from the filtered list.")
 
+(defvar-local ztree-dir-currently-open-file nil
+  "Currently opened file visible in the ztree-dir buffer")
 
 ;;
 ;; Faces
@@ -88,6 +90,11 @@ One could add own filters in the following way:
   :group 'Ztree :group 'font-lock-highlighting-faces)
 (defvar ztreep-header-face 'ztreep-header-face)
 
+(defface ztreep-dir-selected-file-face
+  '((t (:inherit 'ztreep-leaf-face :weight bold)))
+  "*Face used for current file opened in the same frame in as ZtreeDir buffer."
+  :group 'Ztree :group 'font-lock-highlighting-faces)
+(defvar ztreep-dir-selected-file-face 'ztreep-dir-selected-file-face)
 
 (define-minor-mode ztreedir-mode
   "A minor mode for displaying the directory trees in text mode."
@@ -197,6 +204,25 @@ Otherwise open DIRED with the parent directory"
           (parent 
            (dired (ztree-find-node-in-line parent))))))
 
+(defun ztree-dir--find-all-ztree-dir-buffers (frame)
+  "For a given FRAME return a list of ztree-dir buffers"
+  (cl-loop for wnd in (window-list frame)
+           for buffer = (window-buffer wnd)
+           for buf-major-mode = (buffer-local-value 'major-mode buffer)
+           when (and (eql buf-major-mode 'ztree-mode)
+                     (with-current-buffer buffer
+                       ztreedir-mode))
+           collect buffer))
+
+(defun ztree-dir-highlight-opened-file-hook (frame)
+  "Hook called when the current window has been changed"
+  (when-let ((file (buffer-file-name)))
+    (message file)
+    (dolist (buf (ztree-dir--find-all-ztree-dir-buffers frame))
+      (with-current-buffer buf
+        (setq ztree-dir-currently-open-file file)
+        (ztree-refresh-buffer)))))
+
 ;;
 ;; Implementation of the ztree-protocol
 ;;
@@ -224,10 +250,20 @@ Return T if nodes are equal"
 
 (cl-defmethod ztree-node-action ((file string) hard)
   "Perform an action when the Return is pressed on a NODE."
+  (setq ztree-dir-currently-open-file file)
   (ztree-find-file file hard))
 
-;; for ztree-node-side, ztree-node-face, ztree-node-left-short-name
+(cl-defmethod ztree-node-face ((file string))
+  "Return a face to write a NODE in"
+  ;; return only selected face for now. In the future
+  ;; we can add multiple other faces here as well
+  (if (string-equal file ztree-dir-currently-open-file)
+      ztreep-dir-selected-file-face
+    ztreep-leaf-face))
+
+;; for ztree-node-side, ztree-node-left-short-name
 ;; and ztree-node-right-short-name use default implementations
+
 
 ;;
 ;; Entry point
@@ -242,7 +278,9 @@ Return T if nodes are equal"
       (ztree-view buf-name
                   #'ztree-insert-buffer-header                  
                   (expand-file-name (substitute-in-file-name path))
-                  #'ztreedir-mode
+                  (lambda ()
+                    (ztreedir-mode)
+                    (add-hook 'window-selection-change-functions 'ztree-dir-highlight-opened-file-hook))
                   nil))))
 
 
