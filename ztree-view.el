@@ -126,7 +126,7 @@ MUST inster newline at the end!")
 
 (defface ztreep-node-face
   '((((background dark)) (:foreground "#ffffff"))
-    (((type nil))        (:inherit 'font-lock-function-name-face))
+    (((type nil))        (:inherit font-lock-function-name-face))
     (t                   (:foreground "Blue")))
   "*Face used for expandable entries(directories etc) in Ztree buffer."
   :group 'Ztree :group 'font-lock-highlighting-faces)
@@ -134,7 +134,7 @@ MUST inster newline at the end!")
 
 (defface ztreep-leaf-face
   '((((background dark)) (:foreground "cyan1"))
-    (((type nil))        (:inherit 'font-lock-variable-name-face))
+    (((type nil))        (:inherit font-lock-variable-name-face))
     (t                   (:foreground "darkblue")))
   "*Face used for not expandable nodes(leafs, i.e. files) in Ztree buffer."
   :group 'Ztree :group 'font-lock-highlighting-faces)
@@ -155,7 +155,7 @@ MUST inster newline at the end!")
 (defvar ztreep-expand-sign-face 'ztreep-expand-sign-face)
 
 (defface ztreep-node-count-children-face
-  '((t                   (:inherit 'font-lock-comment-face :slant italic)))
+  '((t                   (:inherit font-lock-comment-face :slant italic)))
   "*Face used for count of number of child entries in Ztree buffer."
   :group 'Ztree :group 'font-lock-highlighting-faces)
 (defvar ztreep-node-count-children-face 'ztreep-node-count-children-face)

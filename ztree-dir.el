@@ -91,7 +91,7 @@ One could add own filters in the following way:
 (defvar ztreep-header-face 'ztreep-header-face)
 
 (defface ztreep-dir-selected-file-face
-  '((t (:inherit 'ztreep-leaf-face :weight bold)))
+  '((t (:inherit ztreep-leaf-face :weight bold)))
   "*Face used for current file opened in the same frame in as ZtreeDir buffer."
   :group 'Ztree :group 'font-lock-highlighting-faces)
 (defvar ztreep-dir-selected-file-face 'ztreep-dir-selected-file-face)
